@@ -11,14 +11,13 @@ import { useToast } from '@/hooks/useToast';
 
 import { Sidebar } from '@/components/panels/Sidebar';
 import { FilterPanel } from '@/components/panels/FilterPanel';
-import { TripIdeasPanel } from '@/components/panels/TripIdeasPanel';
 import { LegalDisclaimer } from '@/components/panels/LegalDisclaimer';
 import { AddPlaceModal } from '@/components/modals/AddPlaceModal';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ToastContainer } from '@/components/ui/Toast';
+import { CookieBanner } from '@/components/CookieBanner';
 
-import { tripIdeas } from '@/lib/data';
 import { Place, PlaceType } from '@/types';
 
 // Dynamic import for LeafletMap (client-side only)
@@ -101,11 +100,6 @@ export default function Home() {
     showToast('Miejsce dodane! Dziękujemy.');
   }, [addPlace, showToast]);
 
-  const handleTripClick = useCallback((trip: typeof tripIdeas[0]) => {
-    // Would fly to trip location
-    showToast('Ładowanie trasy: ' + trip.name);
-  }, [showToast]);
-
   const handleToggleFavorite = useCallback((id: number) => {
     toggleFavorite(id);
     const isFav = favorites.includes(id);
@@ -119,6 +113,17 @@ export default function Home() {
 
   return (
     <main className="relative w-full h-screen overflow-hidden">
+      {/* Google Analytics */}
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-FPL2M0L4XC"></script>
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-FPL2M0L4XC');
+        `
+      }} />
+
       {/* Loading Screen */}
       <LoadingScreen />
 
@@ -159,14 +164,11 @@ export default function Home() {
         onResetFilters={resetFilters}
       />
 
-      {/* Trip Ideas */}
-      <TripIdeasPanel
-        trips={tripIdeas}
-        onTripClick={handleTripClick}
-      />
-
       {/* Legal Disclaimer */}
       <LegalDisclaimer />
+
+      {/* Cookie Banner */}
+      <CookieBanner />
 
       {/* Modals */}
       <AddPlaceModal

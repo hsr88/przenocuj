@@ -211,6 +211,20 @@ export function Sidebar({
             </div>
           </div>
         </div>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-forest-100 bg-forest-50/50">
+          <div className="flex flex-wrap gap-2 text-xs text-forest-500">
+            <a href="/o-nas/" className="hover:text-forest-700 transition-colors">O nas</a>
+            <span>•</span>
+            <a href="/polityka-prywatnosci/" className="hover:text-forest-700 transition-colors">Polityka prywatności</a>
+            <span>•</span>
+            <a href="/regulamin/" className="hover:text-forest-700 transition-colors">Regulamin</a>
+          </div>
+          <p className="text-[10px] text-forest-400 mt-2">
+            © 2025 Przenocuj.eu • kontakt@hsr.gg
+          </p>
+        </div>
       </aside>
     </>
   );
