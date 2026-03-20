@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { 
-  Menu, X, Search, Crosshair, Heart, Route, PlusCircle, Crown, MapPin
+  Menu, X, Search, Crosshair, Heart, Route, PlusCircle, Crown, MapPin, HelpCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Place } from '@/types';
@@ -20,6 +20,7 @@ interface SidebarProps {
   onOpenAddModal: () => void;
   onSearch: (query: string) => void;
   onLocate: () => void;
+  onOpenHowToUse?: () => void;
 }
 
 export function Sidebar({
@@ -34,6 +35,7 @@ export function Sidebar({
   onOpenAddModal,
   onSearch,
   onLocate,
+  onOpenHowToUse,
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -180,6 +182,17 @@ export function Sidebar({
               </button>
             )}
           </div>
+
+          {/* How to use */}
+          {onOpenHowToUse && (
+            <button 
+              onClick={onOpenHowToUse}
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl transition-colors text-sm font-medium"
+            >
+              <HelpCircle size={18} />
+              Jak używać?
+            </button>
+          )}
 
           {/* Add Place */}
           <Button onClick={onOpenAddModal} className="w-full flex items-center justify-center gap-2">

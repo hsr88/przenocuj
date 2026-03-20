@@ -17,6 +17,8 @@ import { LoadingScreen } from '@/components/LoadingScreen';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import { ToastContainer } from '@/components/ui/Toast';
 import { CookieBanner } from '@/components/CookieBanner';
+import { AlphaBanner } from '@/components/AlphaBanner';
+import { HowToUseModal } from '@/components/modals/HowToUseModal';
 
 import { Place, PlaceType } from '@/types';
 
@@ -43,6 +45,7 @@ export default function Home() {
   const { toasts, showToast, removeToast } = useToast();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isHowToUseOpen, setIsHowToUseOpen] = useState(false);
   const [mapInstance, setMapInstance] = useState<any>(null);
 
   const handleFlyToPlace = useCallback((place: Place) => {
@@ -155,6 +158,7 @@ export default function Home() {
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onSearch={handleSearch}
         onLocate={getPosition}
+        onOpenHowToUse={() => setIsHowToUseOpen(true)}
       />
 
       {/* Filter Panel */}
@@ -167,10 +171,18 @@ export default function Home() {
       {/* Legal Disclaimer */}
       <LegalDisclaimer />
 
+      {/* Alpha Banner */}
+      <AlphaBanner />
+
       {/* Cookie Banner */}
       <CookieBanner />
 
       {/* Modals */}
+      <HowToUseModal
+        isOpen={isHowToUseOpen}
+        onClose={() => setIsHowToUseOpen(false)}
+      />
+      
       <AddPlaceModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
