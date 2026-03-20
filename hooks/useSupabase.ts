@@ -62,14 +62,14 @@ export function useSupabase() {
       .channel('places_changes')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'places' },
-        (payload) => {
+        (payload: { eventType: string; new: Place; old: { id: number } }) => {
           if (payload.eventType === 'INSERT') {
-            setPlaces(prev => [payload.new as Place, ...prev]);
+            setPlaces(prev => [payload.new, ...prev]);
           } else if (payload.eventType === 'DELETE') {
             setPlaces(prev => prev.filter(p => p.id !== payload.old.id));
           } else if (payload.eventType === 'UPDATE') {
             setPlaces(prev => prev.map(p => 
-              p.id === payload.new.id ? payload.new as Place : p
+              p.id === payload.new.id ? payload.new : p
             ));
           }
         }

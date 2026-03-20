@@ -77,7 +77,7 @@ async function updatePlaceRating(placeId: number) {
       .eq('place_id', placeId);
 
     if (reviews && reviews.length > 0) {
-      const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+      const avg = reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length;
       
       await supabase
         .from('places')
