@@ -236,19 +236,23 @@ function createPopupHTML(place: Place, isFav: boolean, isInRoute: boolean): stri
     ? `<a href="${place.regulation_link}" target="_blank" class="text-xs text-forest-600 hover:underline"><i class="fas fa-external-link-alt mr-1"></i>Regulamin</a>` 
     : '';
   
-  // External review links
+  // External review links - FIXED
   const reviewLinksHtml = place.osmId 
     ? `<div class="mt-3 pt-3 border-t border-gray-100">
-         <p class="text-xs text-gray-500 mb-1">Opinie zewnętrzne:</p>
+         <p class="text-xs text-gray-500 mb-1">Zobacz na mapie:</p>
          <div class="flex flex-wrap gap-1">
-           <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name + ' ' + place.lat + ' ' + place.lng)}" 
+           <a href="https://www.google.com/maps?q=${place.lat},${place.lng}" 
               target="_blank" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded hover:bg-blue-100">
-             Google Maps
+             📍 Google Maps
+           </a>
+           <a href="https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lng}&zoom=16" 
+              target="_blank" class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded hover:bg-green-100">
+             🗺️ OSM
            </a>
            ${place.type === 'van' || place.type === 'free' ? 
-             `<a href="https://www.park4night.com/pl/search?lat=${place.lat}&lng=${place.lng}&radius=10" 
-                target="_blank" class="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded hover:bg-green-100">
-               Park4Night
+             `<a href="https://www.park4night.com/pl/map?lat=${place.lat}&lng=${place.lng}&zoom=14" 
+                target="_blank" class="text-[10px] bg-orange-50 text-orange-600 px-2 py-0.5 rounded hover:bg-orange-100">
+               🚐 Park4Night
              </a>` : ''}
          </div>
        </div>`

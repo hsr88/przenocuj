@@ -7,9 +7,9 @@ export function useFavorites() {
   const [favorites, setFavorites] = useLocalStorage<number[]>('przenocuj_favorites', []);
 
   const toggleFavorite = useCallback((placeId: number) => {
-    setFavorites(prev => {
+    setFavorites((prev: number[]) => {
       if (prev.includes(placeId)) {
-        return prev.filter(id => id !== placeId);
+        return prev.filter((id: number) => id !== placeId);
       }
       return [...prev, placeId];
     });
@@ -20,7 +20,7 @@ export function useFavorites() {
   }, [favorites]);
 
   const removeFavorite = useCallback((placeId: number) => {
-    setFavorites(prev => prev.filter(id => id !== placeId));
+    setFavorites((prev: number[]) => prev.filter((id: number) => id !== placeId));
   }, [setFavorites]);
 
   return {

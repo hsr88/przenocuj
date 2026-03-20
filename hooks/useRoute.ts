@@ -7,14 +7,14 @@ export function useRoute() {
   const [route, setRoute] = useLocalStorage<number[]>('przenocuj_route', []);
 
   const addToRoute = useCallback((placeId: number) => {
-    setRoute(prev => {
+    setRoute((prev: number[]) => {
       if (prev.includes(placeId)) return prev;
       return [...prev, placeId];
     });
   }, [setRoute]);
 
   const removeFromRoute = useCallback((placeId: number) => {
-    setRoute(prev => prev.filter(id => id !== placeId));
+    setRoute((prev: number[]) => prev.filter((id: number) => id !== placeId));
   }, [setRoute]);
 
   const clearRoute = useCallback(() => {

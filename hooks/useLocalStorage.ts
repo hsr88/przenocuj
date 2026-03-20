@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -20,11 +20,12 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
     }
   }, [key]);
 
-  const setValue = (value: T) => {
+  const setValue = (value: T | ((prev: T) => T)) => {
     try {
-      setStoredValue(value);
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(value));
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
       }
     } catch (error) {
       console.error('Error saving to localStorage:', error);

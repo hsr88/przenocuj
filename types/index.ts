@@ -15,6 +15,8 @@ export interface Place {
   price?: string;
   isLegal: boolean;
   isFree: boolean;
+  osmId?: number;
+  osmType?: string;
 }
 
 export interface Filters {

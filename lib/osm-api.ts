@@ -1,9 +1,3 @@
-/**
- * OpenStreetMap API Service
- * Pobiera campingi, miejsca dla kamperów i punkty biwakowe z OSM
- * Na podstawie OpenCampingMap - używa Overpass API
- */
-
 import { Place } from '@/types';
 
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter';
@@ -120,6 +114,72 @@ export async function fetchOSMPlaces(
   }
 }
 
+// Funkcja generująca inteligentną nazwę
+function generateSmartName(tags: Record<string, string>, id: number): string {
+  // 1. Sprawdź czy jest nazwa w OSM
+  const osmName = tags.name || tags['name:pl'] || tags['name:en'] || tags['name:de'] || tags['name:fr'];
+  if (osmName && osmName.length > 2 && !osmName.match(/^\d+$/)) {
+    return osmName;
+  }
+  
+  // 2. Określ typ obiektu
+  const tourism = tags.tourism;
+  const campType = tags.camp_site;
+  const capacity = tags.capacity;
+  
+  // 3. Generuj nazwę na podstawie typu
+  let baseName = '';
+  
+  if (tourism === 'camp_site') {
+    if (campType === 'glamping') {
+      baseName = 'Glamping';
+    } else if (campType === 'group_only') {
+      baseName = 'Pole biwakowe grupowe';
+    } else if (campType === 'nudist') {
+      baseName = 'Camping naturystyczny';
+    } else if (tags.backcountry === 'yes') {
+      baseName = 'Miejsce biwakowe';
+    } else if (tags.caravans === 'yes' || tags.static_caravans === 'yes') {
+      baseName = 'Camping dla kamperów';
+    } else {
+      baseName = 'Pole kempingowe';
+    }
+  } else if (tourism === 'caravan_site') {
+    baseName = 'Pole dla kamperów';
+  } else if (tourism === 'alpine_hut') {
+    baseName = 'Schronisko górskie';
+  } else if (tourism === 'wilderness_hut') {
+    baseName = 'Schronisko dzikie';
+  } else if (tourism === 'picnic_site') {
+    baseName = 'Miejsce piknikowe';
+  } else if (tags.amenity === 'parking' && tags.caravans === 'yes') {
+    baseName = 'Parking dla kamperów';
+  } else if (tags.amenity === 'shelter') {
+    baseName = 'Wiata';
+  } else {
+    baseName = 'Miejsce noclegowe';
+  }
+  
+  // 4. Dodaj lokalizację jeśli dostępna
+  const location = tags['addr:city'] || tags['addr:place'] || tags['is_in'];
+  if (location) {
+    return `${baseName} - ${location}`;
+  }
+  
+  // 5. Dodaj opis jeśli dostępny
+  if (tags.description && tags.description.length < 30) {
+    return `${baseName} (${tags.description})`;
+  }
+  
+  // 6. Dodaj informację o operatorze
+  if (tags.operator && tags.operator.length < 25) {
+    return `${baseName} (${tags.operator})`;
+  }
+  
+  // 7. Fallback z ID
+  return `${baseName} #${id - 99999}`;
+}
+
 // Konwersja danych OSM na format Place
 function convertOSMToPlaces(elements: any[]): Place[] {
   const places: Place[] = [];
@@ -170,6 +230,9 @@ function convertOSMToPlaces(elements: any[]): Place[] {
       type = 'van'; // Komercyjne campingi jako van-friendly
     }
     
+    // Generuj inteligentną nazwę
+    const name = generateSmartName(tags, idCounter);
+    
     // Zbuduj opis
     let description = '';
     if (tags.description) {
@@ -215,12 +278,6 @@ function convertOSMToPlaces(elements: any[]): Place[] {
     } else if (tags.fee === 'yes') {
       price = 'Płatne';
     }
-    
-    // Nazwa
-    const name = tags.name || 
-                tags['name:pl'] || 
-                tags['name:en'] || 
-                `${tags.tourism === 'camp_site' ? 'Camping' : 'Miejsce'} #${idCounter - 99999}`;
     
     // Zbuduj obiekt Place
     const place: Place = {
